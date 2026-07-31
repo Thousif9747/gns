@@ -1,0 +1,56 @@
+.env
+**/.env
+**/.venv/
+*.pyc
+__pycache__/
+node_modules/
+dist/
+staticfiles/
+staticfiles_dev/
+media/
+.DS_Store
+*.log
+*.keystore
+*.apk
+*.aab
+*.tgz
+all keys
+local.properties
+
+# Local IDE, design-review and generated artifacts
+.idea/
+.vscode/
+.gradle/
+.design-session-*/
+.eval/
+eval_*.md
+*-login*.png
+industrial*.png
+gns-edge*.png
+build/
+cmdline-tools/
+app/
+gradle/
+gradlew
+gradlew.bat
+build.gradle
+gradle.properties
+settings.gradle
+manifest-checksum.txt
+store_icon.png
+twa-manifest.json
+
+# Django migrations
+**/migrations/
+!**/migrations/__init__.py
+!**/migrations/__pycache__/
+
+# Firebase service account credentials (sensitive!)
+backend/credentials/
+!backend/credentials/.gitkeep
+
+# Android TWA — generated project (regenerate from twa-manifest.json)
+android/*
+!android/twa-manifest.json
+!android/README.md
+.deploy-keys/

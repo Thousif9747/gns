@@ -1,0 +1,15 @@
+Django==5.1.*
+djangorestframework==3.15.*
+djangorestframework-simplejwt==5.*
+django-cors-headers==4.*
+django-redis==5.*
+django-extensions==3.*
+Pillow==10.*
+psycopg2-binary==2.*
+fpdf2==2.7.*
+redis==5.*
+gunicorn==22.*
+python-decouple==3.*
+drf-spectacular==0.*
+firebase-admin==6.*
+requests==2.*

@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.GrowNest.app",
+      "sha256_cert_fingerprints": [
+        "8A:07:19:24:03:62:1C:F9:C6:24:2C:F1:07:A5:A7:B4:8B:70:34:B0:83:2C:45:F4:ED:67:D5:3C:A6:83:FA:FB"
+      ]
+    }
+  }
+]
