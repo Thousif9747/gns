@@ -8,6 +8,9 @@ export default defineConfig({
     react(),
     tailwindcss(),
     VitePWA({
+      // Firebase Messaging owns the root service-worker registration.
+      // Keep the installable manifest without registering a competing sw.js.
+      injectRegister: null,
       registerType: 'autoUpdate',
       includeAssets: ['icons/logo-*.png'],
       manifest: {

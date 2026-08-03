@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app'
 import { getMessaging, getToken, onMessage } from 'firebase/messaging'
 
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
@@ -42,9 +42,15 @@ export async function requestFcmToken() {
       return null
     }
 
-    const token = await getToken(messaging, {
-      vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
-    })
+    const serviceWorkerRegistration = await navigator.serviceWorker.register(
+      '/firebase-messaging-sw.js',
+      { scope: '/', updateViaCache: 'none' },
+    )
+    const options = { serviceWorkerRegistration }
+    if (import.meta.env.VITE_FIREBASE_VAPID_KEY) {
+      options.vapidKey = import.meta.env.VITE_FIREBASE_VAPID_KEY
+    }
+    const token = await getToken(messaging, options)
     return token
   } catch (err) {
     console.error('FCM token request failed:', err)
