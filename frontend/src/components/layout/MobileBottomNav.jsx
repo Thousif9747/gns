@@ -55,7 +55,7 @@ const itemVariants = {
 
 export default function MobileBottomNav() {
   const [moreOpen, setMoreOpen] = useState(false)
-  const { user } = useAuth()
+  const { user, logout } = useAuth()
   const location = useLocation()
   const sheetRef = useRef(null)
 
@@ -192,7 +192,20 @@ export default function MobileBottomNav() {
                 })}
               </div>
 
-              {!user && (
+              {user ? (
+                <div className="px-3 pb-6">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMoreOpen(false)
+                      logout()
+                    }}
+                    className="flex w-full items-center justify-center gap-2 rounded-full border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700 transition-all hover:bg-red-100 active:scale-95"
+                  >
+                    Sign out
+                  </button>
+                </div>
+              ) : (
                 <div className="px-3 pb-6">
                   <Link
                     to="/login"
