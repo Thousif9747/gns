@@ -90,6 +90,9 @@ export default function Checkout() {
   }
 
   function useCurrentLocation() {
+    setSelectedAddressId('')
+    setUseNewAddress(true)
+    setShowNewAddress(true)
     if (!window.isSecureContext && window.location.hostname !== 'localhost') {
       setServiceability({ serviceable: false, message: 'Location access requires HTTPS. Enter your PIN code manually.' })
       return
@@ -352,6 +355,21 @@ export default function Checkout() {
                   </div>
                 </div>
               )}
+              <button
+                type="button"
+                onClick={useCurrentLocation}
+                disabled={locationLoading}
+                className="mb-4 flex w-full items-center gap-3 rounded-xl border-2 border-emerald-200 bg-emerald-50 px-4 py-3 text-left font-semibold text-emerald-900 transition hover:border-emerald-500 hover:bg-emerald-100 disabled:cursor-wait disabled:opacity-60"
+              >
+                <span className="grid h-10 w-10 place-items-center rounded-lg bg-emerald-700 text-xl text-white">
+                  {locationLoading ? '…' : '⌖'}
+                </span>
+                <span>
+                  <span className="block text-sm">{locationLoading ? 'Detecting your location…' : 'Use my current location'}</span>
+                  <span className="block text-xs font-normal text-emerald-700">Automatically fill and check delivery availability</span>
+                </span>
+              </button>
+
               {/* Saved Addresses */}
               {savedAddresses.length > 0 && (
                 <div className="space-y-3 mb-4">
@@ -438,20 +456,6 @@ export default function Checkout() {
                   {savedAddresses.length === 0 && (
                     <p className="text-sm text-gray-500 mb-2">No saved addresses. Please enter your shipping details below.</p>
                   )}
-                  <button
-                    type="button"
-                    onClick={useCurrentLocation}
-                    disabled={locationLoading}
-                    className="flex w-full items-center gap-3 rounded-xl border-2 border-emerald-200 bg-emerald-50 px-4 py-3 text-left font-semibold text-emerald-900 transition hover:border-emerald-500 hover:bg-emerald-100 disabled:cursor-wait disabled:opacity-60"
-                  >
-                    <span className="grid h-10 w-10 place-items-center rounded-lg bg-emerald-700 text-xl text-white">
-                      {locationLoading ? '…' : '⌖'}
-                    </span>
-                    <span>
-                      <span className="block text-sm">{locationLoading ? 'Detecting your location…' : 'Use my current location'}</span>
-                      <span className="block text-xs font-normal text-emerald-700">Automatically fill and check delivery availability</span>
-                    </span>
-                  </button>
                   <div className="grid grid-cols-2 gap-4">
                     <Input label="Full Name" name="full_name" value={address.full_name} onChange={e => setAddress({ ...address, full_name: e.target.value })} />
                     <Input label="Phone" name="phone" value={address.phone} onChange={e => setAddress({ ...address, phone: e.target.value })} />
