@@ -11,6 +11,7 @@ export default defineConfig({
       // Firebase Messaging owns the root service-worker registration.
       // Keep the installable manifest without registering a competing sw.js.
       injectRegister: null,
+      selfDestroying: true,
       registerType: 'autoUpdate',
       includeAssets: ['icons/logo-*.png'],
       manifest: {
