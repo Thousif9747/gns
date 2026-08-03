@@ -162,9 +162,8 @@ export default function Login() {
           transition={{ duration: 0.7, delay: 0.1 }}
           className="auth-story-content"
         >
-          <Link to="/" className="auth-wordmark">
-            <span className="auth-monogram" aria-hidden="true"><i /><i /><i /></span>
-            <span className="auth-wordmark-copy"><strong>GrowNest</strong> Paper Products</span>
+          <Link to="/" className="auth-wordmark" aria-label="GrowNest Paper Products home">
+            <img src="/icons/logo-192x192.png" alt="GrowNest Paper Products" className="h-20 w-20 rounded-full bg-white object-contain shadow-lg" />
           </Link>
           <p className="auth-kicker">GrowNest Supply Network</p>
           <h2 className="auth-story-title">
@@ -197,9 +196,8 @@ export default function Login() {
           className="auth-form-plane"
         >
           <div className="auth-mobile-brand">
-            <Link to="/" className="auth-wordmark auth-wordmark-mobile">
-              <span className="auth-monogram" aria-hidden="true"><i /><i /><i /></span>
-              <span className="auth-wordmark-copy"><strong>GrowNest</strong> Paper Products</span>
+            <Link to="/" className="auth-wordmark auth-wordmark-mobile" aria-label="GrowNest Paper Products home">
+              <img src="/icons/logo-192x192.png" alt="GrowNest Paper Products" className="h-16 w-16 rounded-full bg-white object-contain shadow-md" />
             </Link>
           </div>
 

@@ -1,14 +1,14 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useAuth } from '../../context/AuthContext'
 import { useToast } from '../../context/ToastContext'
 import { get, patch } from '../../api/client'
 import { onForegroundMessage } from '../../utils/firebase'
 
-// Polling is the reliable fallback (5s).
+// Polling is a fallback; FCM handles real-time updates when available.
 // FCM provides instant real-time updates when available.
-const POLL_INTERVAL = 2000 // 2 seconds (down from 5s for snappier notifications)
+const POLL_INTERVAL = 30000
 
 const TYPE_COLORS = {
   ORDER_DELIVERED: 'bg-green-500',
@@ -43,6 +43,7 @@ function truncate(text, max = 60) {
 export default function NotificationBell() {
   const { user } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
   const { showToast } = useToast()
   const [open, setOpen] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
@@ -105,6 +106,18 @@ export default function NotificationBell() {
     }, POLL_INTERVAL)
     return () => clearInterval(interval)
   }, [user, fetchUnreadCount, checkForNewNotification])
+
+  useEffect(() => {
+    setOpen(false)
+  }, [location.pathname])
+
+  useEffect(() => {
+    if (!user) {
+      setOpen(false)
+      setUnreadCount(0)
+      setNotifications([])
+    }
+  }, [user])
 
   // ---- Fetch notifications when dropdown opens ----
   useEffect(() => {
@@ -190,9 +203,10 @@ export default function NotificationBell() {
     <div className="relative" ref={bellRef}>
       {/* Bell button */}
       <button
-        onClick={() => setOpen(!open)}
+        onClick={() => setOpen(value => !value)}
         className="relative flex items-center justify-center w-9 h-9 rounded-full border border-beige-300 text-gray-600 hover:text-primary-600 hover:border-primary-300 transition-colors"
         aria-label="Notifications"
+        aria-expanded={open}
       >
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />

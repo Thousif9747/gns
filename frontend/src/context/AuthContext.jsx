@@ -88,16 +88,19 @@ export function AuthProvider({ children }) {
     return res.data
   }
 
-  async function logout() {
-    // Remove FCM token from backend before clearing local state
-    await removeFcmToken()
+  function logout() {
     const refresh = localStorage.getItem('refresh_token')
-    if (refresh) {
-      await post('/auth/logout/', { refresh }).catch(() => {})
-    }
+    // Start best-effort server cleanup while the access token is still available,
+    // but never make the user wait for network calls before signing out locally.
+    void Promise.allSettled([
+      removeFcmToken(),
+      refresh ? post('/auth/logout/', { refresh }) : Promise.resolve(),
+    ])
     localStorage.removeItem('access_token')
     localStorage.removeItem('refresh_token')
+    sessionStorage.removeItem('redirect_after_login')
     setUser(null)
+    window.location.replace('/login')
   }
 
   async function sendOtp(email, purpose) {
