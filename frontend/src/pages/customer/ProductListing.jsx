@@ -3,7 +3,6 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { get, post, del, extractList } from '../../api/client'
 import { useAuth } from '../../context/AuthContext'
-import { useCart } from '../../context/CartContext'
 import Card from '../../components/ui/Card'
 import Button from '../../components/ui/Button'
 import Badge from '../../components/ui/Badge'
@@ -29,13 +28,10 @@ const cardVariants = {
 export default function ProductListing() {
   const { user } = useAuth()
   const navigate = useNavigate()
-  const { addItem, setDirectCheckoutItem } = useCart()
   const [searchParams, setSearchParams] = useSearchParams()
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
-  const [adding, setAdding] = useState(null)
-  const [addedId, setAddedId] = useState(null)
   const [wishlist, setWishlist] = useState(new Set())
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [localSearch, setLocalSearch] = useState(searchParams.get('search') || '')
@@ -96,35 +92,10 @@ export default function ProductListing() {
     updateParam('search', localSearch.trim())
   }
 
-  async function handleAdd(product, e) {
-    e.preventDefault()
-    setAdding(product.id)
-    const variant = product.cheapest_variant || null
-    await addItem(product, 1, variant)
-    setAdding(null)
-    setAddedId(product.id)
-    setTimeout(() => setAddedId(null), 1800)
-  }
-
-  function handleBuyNow(product, e) {
+  function openProduct(product, e) {
     e.preventDefault()
     e.stopPropagation()
-    const variant = product.cheapest_variant || null
-    const price = variant?.price || product?.offer_info?.discounted_price || product?.base_price
-    setDirectCheckoutItem({
-      product: product.id,
-      variant: variant?.id || null,
-      variant_name: variant?.name || '',
-      product_name: product.name,
-      product_slug: product.slug,
-      product_price: price,
-      base_price: product?.base_price,
-      product_image: product.image_url || '',
-      quantity: 1,
-      line_total: price,
-      offer_info: product?.offer_info || null,
-    })
-    navigate('/checkout')
+    navigate(`/products/${product.slug}`)
   }
 
   const filteredCount = useMemo(() => products.length, [products])
@@ -322,12 +293,11 @@ export default function ProductListing() {
                   >
                     <ProductCard
                       product={product}
-                      onAdd={handleAdd}
-                      onBuyNow={handleBuyNow}
+                      onAdd={openProduct}
+                      onBuyNow={openProduct}
                       onWishlist={user ? toggleWishlist : null}
                       wished={wishlist.has(product.id)}
-                      adding={adding === product.id}
-                      added={addedId === product.id}
+                      detailOnly
                     />
                   </motion.div>
                 ))}
