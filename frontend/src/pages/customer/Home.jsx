@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { get, extractList } from '../../api/client'
-import { useCart } from '../../context/CartContext'
 import ProductCard from '../../components/ui/ProductCard'
 import AutoCarousel from '../../components/ui/AutoCarousel'
 
@@ -12,7 +11,6 @@ export default function Home() {
   const [banners, setBanners] = useState([])
   const [reviews, setReviews] = useState([])
   const [loading, setLoading] = useState(true)
-  const { addItem, setDirectCheckoutItem } = useCart()
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -29,16 +27,10 @@ export default function Home() {
     }).finally(() => setLoading(false))
   }, [])
 
-  async function add(product, e) {
+  function openProduct(product, e) {
     e.preventDefault()
-    await addItem(product, 1, product.cheapest_variant || null)
-  }
-  function buy(product, e) {
-    e.preventDefault()
-    const variant = product.cheapest_variant || null
-    const price = variant?.price || product.offer_info?.discounted_price || product.base_price
-    setDirectCheckoutItem({ product: product.id, variant: variant?.id || null, variant_name: variant?.name || '', product_name: product.name, product_slug: product.slug, product_price: price, base_price: product.base_price, product_image: product.image_url || '', quantity: 1, line_total: price, offer_info: product.offer_info || null })
-    navigate('/checkout')
+    e.stopPropagation()
+    navigate(`/products/${product.slug}`)
   }
 
   const offerProducts = useMemo(() => featured.filter(product => product.offer_info), [featured])
@@ -74,18 +66,18 @@ export default function Home() {
       </CommerceSection>
 
       <CommerceSection title="Bestsellers" subtitle="Most loved paper essentials" link="/products">
-        {loading ? <ProductSkeletons /> : featured.length ? <ProductRail products={featured.slice(0, 12)} add={add} buy={buy} /> : <Empty message="Our collection is being refreshed." />}
+        {loading ? <ProductSkeletons /> : featured.length ? <ProductRail products={featured.slice(0, 12)} openProduct={openProduct} /> : <Empty message="Our collection is being refreshed." />}
       </CommerceSection>
 
       {(offerProducts.length > 0 || offers.length > 0) && <CommerceSection title="Deals for you" subtitle="More value in every pack" link="/offers" accent>
-        {offerProducts.length ? <ProductRail products={offerProducts.slice(0, 12)} add={add} buy={buy} /> :
+        {offerProducts.length ? <ProductRail products={offerProducts.slice(0, 12)} openProduct={openProduct} /> :
           <div className="flex snap-x gap-3 overflow-x-auto pb-2">{offers.slice(0, 6).map(offer => <Link key={offer.id} to="/offers" className="min-w-[240px] snap-start rounded-2xl border border-[#f3d9a9] bg-[#fff4df] p-5 text-sm font-black text-[#704d13]">{offer.name}</Link>)}</div>}
       </CommerceSection>}
 
       {categories.slice(0, 2).map(category => {
         const products = featured.filter(product => product.category === category.id || product.category_name === category.name)
         return products.length ? <CommerceSection key={category.id} title={category.name} subtitle="Handpicked for you" link={`/products?category=${category.slug}`}>
-          <ProductRail products={products} add={add} buy={buy} />
+          <ProductRail products={products} openProduct={openProduct} />
         </CommerceSection> : null
       })}
 
@@ -111,8 +103,8 @@ function CommerceSection({ title, subtitle, link, children, accent }) {
     <div className="mb-4 flex items-end justify-between gap-3"><div><h2 className="text-xl font-black tracking-[-.02em] sm:text-2xl">{title}</h2><p className="mt-0.5 text-xs font-medium text-[#6b7a71]">{subtitle}</p></div><Link to={link} className="shrink-0 text-xs font-black text-[#146b45]">See all </Link></div>{children}
   </section>
 }
-function ProductRail({ products, add, buy }) {
-  return <div className="-mx-3 flex snap-x snap-mandatory gap-3 overflow-x-auto px-3 pb-3 [scrollbar-width:none] sm:mx-0 sm:px-0">{products.filter(Boolean).map(product => <div key={product.id} className="w-[164px] shrink-0 snap-start sm:w-[190px]"><ProductCard product={product} onAdd={add} onBuyNow={buy} compact /></div>)}</div>
+function ProductRail({ products, openProduct }) {
+  return <div className="-mx-3 flex snap-x snap-mandatory gap-3 overflow-x-auto px-3 pb-3 [scrollbar-width:none] sm:mx-0 sm:px-0">{products.filter(Boolean).map(product => <div key={product.id} className="w-[164px] shrink-0 snap-start sm:w-[190px]"><ProductCard product={product} onAdd={openProduct} onBuyNow={openProduct} compact detailOnly /></div>)}</div>
 }
 function ProductSkeletons() { return <div className="flex gap-3 overflow-hidden">{Array.from({ length: 6 }, (_, i) => <div key={i} className="h-[300px] w-[164px] shrink-0 animate-pulse rounded-2xl border border-[#e2eae4] bg-white"><div className="aspect-square bg-[#edf2ee]" /></div>)}</div> }
 function CategorySkeletons() { return <div className="grid grid-cols-4 gap-3 sm:grid-cols-6 lg:grid-cols-8">{Array.from({ length: 8 }, (_, i) => <div key={i} className="animate-pulse"><div className="aspect-square rounded-2xl bg-[#e8eee9]" /><div className="mx-auto mt-2 h-3 w-2/3 rounded bg-[#e8eee9]" /></div>)}</div> }

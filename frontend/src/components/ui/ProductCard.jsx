@@ -4,7 +4,7 @@ import { useCart } from '../../context/CartContext'
 import { useAuth } from '../../context/AuthContext'
 import { getDiscountPercent, getProductMrp } from '../../utils/catalogPresentation'
 
-export default function ProductCard({ product, onAdd, onBuyNow, onWishlist, wished = false, adding = false, compact = false }) {
+export default function ProductCard({ product, onAdd, onBuyNow, onWishlist, wished = false, adding = false, compact = false, detailOnly = false }) {
   const { items, addItem, updateQuantity } = useCart()
   const { user } = useAuth()
   if (!product) return null
@@ -58,7 +58,7 @@ export default function ProductCard({ product, onAdd, onBuyNow, onWishlist, wish
         <div className="mt-auto pt-2.5">
           {available ? (
             <div className="flex gap-1.5">
-              {quantity > 0 ? (
+              {quantity > 0 && !detailOnly ? (
                 <div className="flex min-h-10 flex-1 items-center overflow-hidden rounded-lg bg-[#176b45] text-white" aria-label={`Quantity ${quantity}`}>
                   <button onClick={decrement} className="grid min-h-10 min-w-10 place-items-center text-xl font-bold hover:bg-white/10" aria-label={`Decrease ${product.name} quantity`}>-</button>
                   <span className="flex-1 text-center text-sm font-extrabold" aria-live="polite">{quantity}</span>
